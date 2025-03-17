@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "690679742228",
+    "project_id": "cgtest-d5c4c",
+    "storage_bucket": "cgtest-d5c4c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:690679742228:android:498440d4b877f669aecc01",
+        "android_client_info": {
+          "package_name": "com.cgtest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAui8zwWJiBmMhWwOqnYLDHf2osN3UnbCg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
