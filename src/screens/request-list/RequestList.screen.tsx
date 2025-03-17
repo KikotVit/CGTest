@@ -10,8 +10,11 @@ import { Screen } from '@/components/screen/screen';
 import firestore from '@react-native-firebase/firestore';
 import { Proposal, Request } from '../types';
 import { ProposalModal } from './components/proposal.modal';
+import { useNavigation } from '@react-navigation/native';
+import { EmptyListComponent } from './components/empty-list.component';
 
 export const RequestListScreen = () => {
+    const navigation = useNavigation();
     const [requests, setRequests] = useState<Request[]>([]);
     const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
 
@@ -19,14 +22,17 @@ export const RequestListScreen = () => {
         const subscriber = firestore()
             .collection('requests')
             .onSnapshot(
-                (querySnapshot) => {
+                async (querySnapshot) => {
                     const requestList: Request[] = [];
-                    querySnapshot.forEach((doc) => {
-                        requestList.push({
-                            id: doc.id,
-                            ...doc.data() as Omit<Request, 'id'>,
-                        });
-                    });
+                    for (const doc of querySnapshot.docs) {
+                        const requestData = { id: doc.id, ...doc.data() } as Request;
+                        const proposalsSnapshot = await firestore()
+                            .collection('proposals')
+                            .where('requestId', '==', requestData.id)
+                            .get();
+                        requestData.hasProposal = !proposalsSnapshot.empty;
+                        requestList.push(requestData);
+                    }
                     setRequests(requestList);
                 },
                 (error) => {
@@ -69,9 +75,17 @@ export const RequestListScreen = () => {
                         resizeMode='cover'
                     />
                 )}
+                {item.hasProposal && (
+                    <TouchableOpacity
+                        style={styles.rateButton}
+                        onPress={() => navigation.navigate('RateRequestScreen', { request: item })}
+                    >
+                        <Text style={styles.rateButtonText}>Rate This Request</Text>
+                    </TouchableOpacity>
+                )}
             </TouchableOpacity>
         ),
-        [requests],
+        [requests, navigation],
     );
 
     return (
@@ -80,7 +94,7 @@ export const RequestListScreen = () => {
                 data={requests}
                 renderItem={renderRequest}
                 keyExtractor={(item) => item.id}
-                ListEmptyComponent={<Text>No requests found</Text>}
+                ListEmptyComponent={<EmptyListComponent />}
             />
 
             <ProposalModal
@@ -118,5 +132,16 @@ const styles = StyleSheet.create({
         height: 120,
         marginTop: 8,
         borderRadius: 8,
+    },
+    rateButton: {
+        marginTop: 8,
+        padding: 8,
+        backgroundColor: 'cornflowerblue',
+        borderRadius: 4,
+        alignItems: 'center',
+    },
+    rateButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
 });

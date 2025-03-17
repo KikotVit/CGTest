@@ -1,5 +1,4 @@
 import { AddRequestScreen } from '@/screens/add-request/AddRequest.screen';
-import { RateExecutorScreen } from '@/screens/rate-executor/RateExecutor.screen';
 import { RequestListScreen } from '@/screens/request-list/RequestList.screen';
 import Icon from '@react-native-vector-icons/ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -34,12 +33,6 @@ export const RootTabs = createBottomTabNavigator({
             screen: RequestListScreen,
             options: {
                 title: 'Request list',
-            },
-        },
-        RateExecutorScreen: {
-            screen: RateExecutorScreen,
-            options: {
-                title: 'Rate',
             },
         },
     },

@@ -17,8 +17,8 @@ export const AddRequestScreen = () => {
 
     const [mediaUri, setMediaUri] = useState<string | null>(null);
     const [description, setDescription] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('Repair');
-    const [isLoading, setIsLoading] = useState(false)
+    const [selectedCategory, setSelectedCategory] = useState<RequestCategories>('Repair');
+    const [isLoading, setIsLoading] = useState(false);
 
     const categories: RequestCategories[] = ['Repair', 'Cleaning', 'Other'];
     
@@ -29,22 +29,29 @@ export const AddRequestScreen = () => {
         }
     };
 
+    const clearState = () => {
+        setMediaUri(null);
+        setDescription('');
+        setSelectedCategory('Repair');
+    };
+
     const submit = async () => {
-        if (!mediaUri) return
-        setIsLoading(true)
-        const filename = `photos/${Date.now()}`
+        if (!mediaUri) return;
+        setIsLoading(true);
+        const filename = `photos/${Date.now()}`;
         await storage().ref(filename).putFile(mediaUri);
-        const photoUrl = await storage().ref(filename).getDownloadURL()
+        const photoUrl = await storage().ref(filename).getDownloadURL();
 
         const ref = firestore().collection('requests');
         await ref.add({
             photoUrl,
             description,
             selectedCategory,
-          });
+        });
 
-        setIsLoading(false)
-        navigation.navigate('RequestListScreen')
+        setIsLoading(false);
+        clearState();
+        navigation.navigate('RequestListScreen');
     };
 
     const isSubmitEnable = mediaUri && selectedCategory && description;
@@ -52,7 +59,6 @@ export const AddRequestScreen = () => {
         <Screen
             style={styles.root}
         >
-            
             <TextInput
                 value={description}
                 multiline

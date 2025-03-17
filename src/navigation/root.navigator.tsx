@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootTabs } from './tab.navigator';
 import { createStaticNavigation, StaticParamList } from '@react-navigation/native';
+import { RateRequestScreen } from '@/screens/rate-request/RateRequest.screen';
 
 export const RootStack = createNativeStackNavigator({
     screens: {
@@ -10,10 +11,17 @@ export const RootStack = createNativeStackNavigator({
                 headerShown: false,
             },
         },
+        RateRequestScreen: {
+            screen: RateRequestScreen,
+            options: {
+                title: 'Rate request',
+                headerBackTitle: 'Back',
+            },
+        },
     },
 });
 
-type RootStackParamList = StaticParamList<typeof RootTabs>;
+type RootStackParamList = StaticParamList<typeof RootStack & typeof RootTabs>;
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace

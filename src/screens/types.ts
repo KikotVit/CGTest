@@ -5,6 +5,7 @@ export type Request = {
     photoUrl: string,
     description: string,
     selectedCategory: RequestCategories,
+    hasProposal?: boolean,
 }
 
 export type Proposal = {
