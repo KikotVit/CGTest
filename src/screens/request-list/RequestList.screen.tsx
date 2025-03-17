@@ -19,27 +19,60 @@ export const RequestListScreen = () => {
     const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
 
     useEffect(() => {
-        const subscriber = firestore()
+        const requestSubscriber = firestore()
             .collection('requests')
             .onSnapshot(
                 async (querySnapshot) => {
-                    const requestList: Request[] = [];
-                    for (const doc of querySnapshot.docs) {
-                        const requestData = { id: doc.id, ...doc.data() } as Request;
-                        const proposalsSnapshot = await firestore()
-                            .collection('proposals')
-                            .where('requestId', '==', requestData.id)
-                            .get();
-                        requestData.hasProposal = !proposalsSnapshot.empty;
-                        requestList.push(requestData);
-                    }
-                    setRequests(requestList);
+                    const requestList: Request[] = querySnapshot.docs.map((doc) => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    })) as Request[];
+
+                    const updatedRequests = await Promise.all(
+                        requestList.map(async (request) => {
+                            const proposalsSnapshot = await firestore()
+                                .collection('proposals')
+                                .where('requestId', '==', request.id)
+                                .get();
+                            return { ...request, hasProposal: !proposalsSnapshot.empty };
+                        }),
+                    );
+                    setRequests(updatedRequests);
                 },
                 (error) => {
                     console.error('Error fetching requests:', error);
                 },
             );
-        return () => subscriber();
+        const proposalSubscriber = firestore()
+            .collection('proposals')
+            .onSnapshot(
+                async () => {
+                    const requestsSnapshot = await firestore().collection('requests').get();
+                    const requestList: Request[] = requestsSnapshot.docs.map((doc) => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    })) as Request[];
+
+                    const updatedRequests = await Promise.all(
+                        requestList.map(async (request) => {
+                            const proposalsSnapshot = await firestore()
+                                .collection('proposals')
+                                .where('requestId', '==', request.id)
+                                .get();
+                            return { ...request, hasProposal: !proposalsSnapshot.empty };
+                        }),
+                    );
+                    setRequests(updatedRequests);
+                },
+                (error) => {
+                    console.error('Error fetching proposals:', error);
+                },
+            );
+
+        return () => {
+            requestSubscriber();
+            proposalSubscriber();
+        };
     }, []);
 
     const submitProposal = async (proposal: Proposal) => {
