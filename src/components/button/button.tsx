@@ -22,11 +22,11 @@ export const Button = (props: IButtonProps) => {
             ])}
             disabled={preset === 'disabled'}
             onPress={onPress} >
-                {
-                    isLoading && (
-                        <ActivityIndicator color={'grey'} />
-                    )
-                }
+            {
+                isLoading && (
+                    <ActivityIndicator color={'grey'} />
+                )
+            }
             <Text style={[styles.baseText, styles[`${preset}Text`]]}>{isLoading ? 'Loading' : text}</Text>
         </Pressable>
     );
@@ -64,5 +64,5 @@ const styles = StyleSheet.create({
     },
     disabledText: {
         color: 'grey',
-    }
+    },
 });

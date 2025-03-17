@@ -1,20 +1,15 @@
 import { Button } from '@/components/button/button';
 import { Screen } from '@/components/screen/screen';
-import { Picker } from '@react-native-picker/picker';
 import Icon from '@react-native-vector-icons/ionicons';
 import React, { useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import '@react-native-firebase/app';
-import firestore, { collection, getDoc, getFirestore, query, where } from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 
 import storage from '@react-native-firebase/storage';
 import { useNavigation } from '@react-navigation/native';
 import { RequestCategories } from '../types';
-
-// set the host and the port property to connect to the emulator
-// set these before any read/write operations occur to ensure it doesn't affect your Cloud Firestore data!
-
 
 export const AddRequestScreen = () => {
 
